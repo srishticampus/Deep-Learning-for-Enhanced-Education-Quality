@@ -251,14 +251,7 @@ export const ViewApplicationDetails = ({
                 </label>
                 <p className="tw-font-medium">{jobDetails.salary_range}</p>
               </div>
-              <div className="tw-mb-6">
-                <label className="tw-text-sm tw-text-gray-500">
-                  Application deadline
-                </label>
-                <p className="tw-font-medium">
-                  {jobDetails.application_deadline}
-                </p>
-              </div>
+              
               <div className="tw-mb-6">
                 <label className="tw-text-sm tw-text-gray-500">Skills</label>
                 <p className="tw-font-medium">{jobDetails.required_skills}</p>
@@ -302,3 +295,12 @@ export const ViewApplicationDetails = ({
     </>
   );
 };
+
+// {/*<div className="tw-mb-6">
+//                 <label className="tw-text-sm tw-text-gray-500">
+//                   Application deadline
+//                 </label>
+//                 <p className="tw-font-medium">
+//                   {jobDetails.application_deadline}
+//                 </p>
+//               </div>*/}

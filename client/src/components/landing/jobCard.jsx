@@ -35,10 +35,10 @@ export const JobCard = ({ job, clickOnJob }) => {
           <span>Location: {job?.location}</span>
         </div>
 
-        <div className="tw-flex tw-items-center tw-text-gray-600">
+        {/*   <div className="tw-flex tw-items-center tw-text-gray-600">
           <Clock className="tw-w-4 tw-h-4 tw-mr-2" />
-          <span>Deadline: {job?.application_deadline} </span>
-        </div>
+        <span>Deadline: {job?.application_deadline} </span>
+        </div>*/}
 
         <div className="tw-flex tw-items-center tw-text-gray-600">
           <IndianRupee className="tw-w-4 tw-h-4 tw-mr-2" />
