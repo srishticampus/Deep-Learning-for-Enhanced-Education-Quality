@@ -109,7 +109,7 @@ export const UserViewJobDetails = ({ jobId }) => {
               </div>
               <div className="tw-flex tw-items-center tw-gap-1">
                 <Calendar className="tw-w-4 tw-h-4" />
-                <span>{jobDetails?.application_deadline}</span>
+               {/*<span>{jobDetails?.application_deadline}</span>*/} 
               </div>
             </div>
           </div>
