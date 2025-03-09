@@ -18,6 +18,11 @@ from django.conf import settings
 from PyPDF2 import PdfReader
 import google.generativeai as genai
 from django.shortcuts import get_object_or_404
+from .serializers import SelfIntroductionSerializer
+from rest_framework.parsers import MultiPartParser, FormParser
+import speech_recognition as sr
+from moviepy import *
+from .models import SelfIntroduction
 
 # Create your views here.
 
@@ -382,3 +387,47 @@ def get_mcq_file(request, filename):
         data = json.load(file)
 
     return JsonResponse({"mcqs": data})
+
+
+class SelfIntroductionView(APIView):
+    parser_classes = [MultiPartParser, FormParser]
+
+    def post(self, request):
+        user_id = request.data.get("user")
+        audio_file = request.FILES.get("audio_file")
+
+        if not user_id or not audio_file:
+            return Response({"error": "User ID and audio file are required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        file_path = f"media/{audio_file.name}"
+        with open(file_path, "wb+") as destination:
+            for chunk in audio_file.chunks():
+                destination.write(chunk)
+
+        wav_path = file_path.replace(".mp3", ".wav")
+        try:
+            audio_clip = AudioFileClip(file_path)
+            audio_clip.write_audiofile(wav_path) 
+        except Exception as e:
+            return Response({"error": f"Error in converting audio file: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+
+        recognizer = sr.Recognizer()
+        try:
+            with sr.AudioFile(wav_path) as source:
+                audio_data = recognizer.record(source)
+                transcript_text = recognizer.recognize_google(audio_data)
+        except sr.UnknownValueError:
+            transcript_text = "Could not understand the audio"
+        except sr.RequestError:
+            transcript_text = "Speech recognition service error"
+        except Exception as e:
+            transcript_text = f"Error in processing the audio file: {str(e)}"
+
+
+        intro = SelfIntroduction.objects.create(user_id=user_id, audio_file=audio_file, transcription=transcript_text)
+
+        os.remove(file_path)
+        os.remove(wav_path)
+
+        serializer = SelfIntroductionSerializer(intro)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
