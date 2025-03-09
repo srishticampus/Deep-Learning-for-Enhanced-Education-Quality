@@ -20,17 +20,17 @@ export const Footer = () => {
 
           {/* Navigation Links */}
           <div className="tw-space-y-4">
-            <Link to="/" className="tw-block hover:tw-text-blue-400 tw-transition-colors">Home</Link>
-            <Link to="/user/jobs" className="tw-block hover:tw-text-blue-400 tw-transition-colors">Jobs</Link>
-            <Link to="/user/about" className="tw-block hover:tw-text-blue-400 tw-transition-colors">About</Link>
-            <Link to="/user/contact" className="tw-block hover:tw-text-blue-400 tw-transition-colors">Contact</Link>
+            <Link to="/" className="tw-block hover:tw-text-blue-400 tw-transition-colors text-decoration-none">Home</Link>
+            <Link to="/user/jobs" className="tw-block hover:tw-text-blue-400 tw-transition-colors text-decoration-none">Jobs</Link>
+            <Link to="/user/about" className="tw-block hover:tw-text-blue-400 tw-transition-colors text-decoration-none">About</Link>
+            <Link to="/user/contact" className="tw-block hover:tw-text-blue-400 tw-transition-colors text-decoration-none">Contact</Link>
           </div>
 
           {/* Legal Links */}
           <div className="tw-space-y-4">
-            <a href="#" className="tw-block hover:tw-text-blue-400 tw-transition-colors">Terms of conditions</a>
-            <a href="#" className="tw-block hover:tw-text-blue-400 tw-transition-colors">F&Q</a>
-            <a href="#" className="tw-block hover:tw-text-blue-400 tw-transition-colors">Privacy policy</a>
+            <a href="#" className="tw-block hover:tw-text-blue-400 tw-transition-colors text-decoration-none">Terms of conditions</a>
+            <a href="#" className="tw-block hover:tw-text-blue-400 tw-transition-colors text-decoration-none">F&Q</a>
+            <a href="#" className="tw-block hover:tw-text-blue-400 tw-transition-colors text-decoration-none">Privacy policy</a>
           </div>
         </div>
 

@@ -64,12 +64,12 @@ export const InterviewScore = () => {
           </p>
 
           {/* Feedback Section */}
-          <div className="card p-5 m-5">
-          <div style={{padding:"50px"}} className="tw-mt-4 tw-text-lg tw-font-semibold tw-text-gray-700 m-5">
-            <h2 style={{fontSize:"30px"}}><b>Feedback</b></h2>
+          <div className="card m-5">
+          <div className="tw-mt-4 tw-text-lg tw-font-semibold tw-text-gray-700 m-5">
+            <h2 style={{fontSize:"30px"}}>Feedback</h2>
             <h5 style={{marginTop:"15px"}}>{getFeedback(application?.score || 0)}</h5>
-          </div></div>
 
+          </div>
           <div className="tw-flex tw-justify-center tw-m-5">
             <button
               className="tw-bg-blue-600 tw-text-white tw-px-6 tw-py-2 tw-rounded-full tw-flex tw-items-center tw-gap-2"
@@ -78,7 +78,9 @@ export const InterviewScore = () => {
               <ChevronLeft className="tw-w-4 tw-h-4" />
               Back 
             </button>
-          </div>
+          </div></div>
+
+          
         </div>
       </div>
 

@@ -3,11 +3,13 @@ import { UserNavbar } from "../navbar/userNavbar";
 import { Footer } from "../../landing/footer";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { axiosInstance } from "../../../apis/axiosInstance";
 
 function SelfIntroduction() {
   const [audioUrl, setAudioUrl] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
   const [isDisable, setIsDisable] = useState(false);
+  const [transilateddata, setTransilatedData] = useState({});
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const { id } = useParams();
@@ -29,7 +31,9 @@ function SelfIntroduction() {
       };
 
       mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/wav" });
+        const audioBlob = new Blob(audioChunksRef.current, {
+          type: "audio/wav",
+        });
         const url = URL.createObjectURL(audioBlob);
         setAudioUrl(url);
         audioChunksRef.current = [];
@@ -51,6 +55,9 @@ function SelfIntroduction() {
       setIsDisable(true);
     }
   };
+  const GotoMockInterview = () => {
+    navigate(`/user/interview-preview/${id}`);
+  };
 
   // Upload Audio and User Data
   const uploadAudio = async () => {
@@ -58,35 +65,91 @@ function SelfIntroduction() {
       alert("No recorded audio found!");
       return;
     }
+    const convertWebMToWav = async (webmBlob) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsArrayBuffer(webmBlob);
+
+        reader.onloadend = async () => {
+          try {
+            const audioContext = new (window.AudioContext ||
+              window.webkitAudioContext)();
+            const audioBuffer = await audioContext.decodeAudioData(
+              reader.result
+            );
+            const wavBlob = encodeWAV(audioBuffer);
+            resolve(wavBlob);
+          } catch (error) {
+            reject(error);
+          }
+        };
+
+        reader.onerror = (error) => reject(error);
+      });
+    };
+
+    const encodeWAV = (audioBuffer) => {
+      const numOfChannels = audioBuffer.numberOfChannels;
+      const sampleRate = audioBuffer.sampleRate;
+      const format = 1; // PCM
+      const bitDepth = 16;
+
+      let samples = audioBuffer.getChannelData(0); // Mono
+      let buffer = new ArrayBuffer(44 + samples.length * 2);
+      let view = new DataView(buffer);
+
+      // WAV Header
+      writeString(view, 0, "RIFF");
+      view.setUint32(4, 32 + samples.length * 2, true);
+      writeString(view, 8, "WAVE");
+      writeString(view, 12, "fmt ");
+      view.setUint32(16, 16, true);
+      view.setUint16(20, format, true);
+      view.setUint16(22, numOfChannels, true);
+      view.setUint32(24, sampleRate, true);
+      view.setUint32(28, sampleRate * numOfChannels * 2, true);
+      view.setUint16(32, numOfChannels * 2, true);
+      view.setUint16(34, bitDepth, true);
+      writeString(view, 36, "data");
+      view.setUint32(40, samples.length * 2, true);
+
+      // Write PCM Data
+      let offset = 44;
+      for (let i = 0; i < samples.length; i++, offset += 2) {
+        let s = Math.max(-1, Math.min(1, samples[i]));
+        view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7fff, true);
+      }
+
+      return new Blob([view], { type: "audio/wav" });
+    };
+
+    const writeString = (view, offset, string) => {
+      for (let i = 0; i < string.length; i++) {
+        view.setUint8(offset + i, string.charCodeAt(i));
+      }
+    };
 
     const response = await fetch(audioUrl);
-    console.log(response,"res");
-    
     const blob = await response.blob();
-    console.log(blob,"blob");
-    
+    const wavBlob = await convertWebMToWav(blob);
 
     const formData = new FormData();
-    formData.append("audioUrl", blob, "recording.wav");
-    formData.append("userData", userdata);
-    formData.append("id", id);
-    
+    formData.append("audio_file", wavBlob, "recording.mp3"); // Ensure key matches API requirement
+    formData.append("user", id); // Extract user ID
 
     try {
-        console.log(formData,"form");
+      const apiResponse = await axiosInstance.post(
+        "/self-introduction/",
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
 
-    //   const res = await axios.post("http://your-backend-url.com/api/upload-audio", formData, {
-    //     headers: { "Content-Type": "multipart/form-data" },
-    //   });
-
-    //   if (res.status === 200) {
-    //     console.log("Audio uploaded successfully!", res.data);
-    //     navigate(`/user/interview-preview/${id}`);
-    //   } else {
-    //     console.error("Upload failed");
-    //   }
+      console.log("API Response:", apiResponse.data);
+      setTransilatedData(apiResponse.data);
+      // Navigate to the next page, possibly passing transcription data
     } catch (error) {
       console.error("Error uploading audio:", error);
+      alert("Failed to upload audio. Please try again.");
     }
   };
 
@@ -98,20 +161,23 @@ function SelfIntroduction() {
           <h2 className="text-4xl font-bold text-secondary mb-4 p-4">
             Mock Interview - Start With Your Introduction
           </h2>
-          <p className="text-gray-600 text-lg leading-relaxed">Please introduce yourself.</p>
+          <p className="text-gray-600 text-lg leading-relaxed">
+            Please introduce yourself.
+          </p>
 
           <div className="mt-6 flex items-center gap-4">
             <button
               disabled={isDisable}
               onClick={isRecording ? stopRecording : startRecording}
               className={`btn btn-primary m-5 ${
-                isRecording ? "bg-red-600 hover:bg-red-700" : "bg-blue-600 hover:bg-blue-700"
+                isRecording
+                  ? "bg-red-600 hover:bg-red-700"
+                  : "bg-blue-600 hover:bg-blue-700"
               }`}
             >
               {isRecording ? "Stop Recording" : "Start Recording"}
             </button>
           </div>
-
           {/* Audio Playback */}
           <div className="text-center">
             {audioUrl && (
@@ -120,14 +186,37 @@ function SelfIntroduction() {
                   <source src={audioUrl} type="audio/wav" />
                   Your browser does not support the audio element.
                 </audio>
+
+                <p>{transilateddata.transcription}</p>
+                {!transilateddata ||
+                !transilateddata.transcription ||
+                transilateddata.transcription.indexOf(
+                  "Could not understand the audio"
+                ) > -1 ? (
+                  " "
+                ) : (
+                  <button
+                    className="btn btn-primary"
+                    onClick={GotoMockInterview}
+                  >
+                    {" "}
+                    Start Now
+                  </button>
+                )}
                 <div className="row">
                   <div className="col-6">
-                    <button className="btn btn-primary mb-5" onClick={() => window.location.reload()}>
+                    <button
+                      className="btn btn-primary mb-5"
+                      onClick={() => window.location.reload()}
+                    >
                       Retake
                     </button>
                   </div>
                   <div className="col-6">
-                    <button className="btn btn-primary mb-5" onClick={uploadAudio}>
+                    <button
+                      className="btn btn-primary mb-5"
+                      onClick={uploadAudio}
+                    >
                       Upload & Next
                     </button>
                   </div>
