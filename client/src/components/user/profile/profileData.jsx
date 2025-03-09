@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Pencil, Phone, Mail, FileText, Briefcase, Clock } from "lucide-react";
+import { Pencil, Phone, Mail, FileText, Briefcase } from "lucide-react";
 import { EditProfile } from "./editProfile";
 import { useUserData } from "../../../hooks/useUserData";
 import { BACKEND_URL } from "../../../apis/axiosInstance";

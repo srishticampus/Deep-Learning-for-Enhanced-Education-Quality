@@ -7,6 +7,7 @@ export const useUserData = () => {
     const userData = JSON.parse(localStorage.getItem(LEXI_USER_DATA)) || false;
     setUserData(userData);
   }, []);
+console.log(userData,"pp");
 
   return userData;
 };

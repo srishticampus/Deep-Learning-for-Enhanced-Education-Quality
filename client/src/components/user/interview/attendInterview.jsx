@@ -91,6 +91,9 @@ export const AttendInterview = () => {
       if (score === 1) {
         finalScore += 1;
       }
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
     });
     submitInterviewResult(finalScore);
   };
@@ -362,7 +365,7 @@ export const AttendInterview = () => {
                   )}
                   <div className="tw-absolute tw-bottom-4 tw-left-1/2 tw-transform -tw-translate-x-1/2 tw-flex tw-gap-2">
                     <button
-                      onClick={toggleAudio}
+                      // onClick={toggleAudio}
                       className={`tw-rounded-full tw-p-2 tw-transition ${
                         audioEnabled ? "tw-bg-blue-600" : "tw-bg-red-600"
                       }`}
@@ -377,7 +380,7 @@ export const AttendInterview = () => {
                     <div className="tw-relative" ref={menuRef}>
                       <div className="tw-flex tw-gap-1">
                         <button
-                          onClick={toggleVideo}
+                          // onClick={toggleVideo}
                           className={`tw-rounded-full tw-p-2 tw-transition ${
                             videoEnabled ? "tw-bg-blue-600" : "tw-bg-red-600"
                           }`}
