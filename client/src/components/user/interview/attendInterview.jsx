@@ -204,9 +204,9 @@ export const AttendInterview = () => {
       <div>
         <UserNavbar />
         <div className="tw-flex tw-items-center tw-justify-center tw-min-h-screen">
-          <h1>
+          <p>
             Please wait a moment while we generate relevant questions for you...
-          </h1>
+          </p>
           <div className="tw-animate-spin tw-rounded-full tw-h-16 tw-w-16 tw-border-b-2 tw-border-gray-900"></div>
         </div>
 

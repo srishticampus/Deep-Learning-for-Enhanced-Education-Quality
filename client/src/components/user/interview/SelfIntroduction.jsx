@@ -75,16 +75,16 @@ function SelfIntroduction() {
     try {
         console.log(formData,"form");
 
-    //   const res = await axios.post("http://your-backend-url.com/api/upload-audio", formData, {
-    //     headers: { "Content-Type": "multipart/form-data" },
-    //   });
+      // const res = await axios.post("http://your-backend-url.com/api/upload-audio", formData, {
+      //   headers: { "Content-Type": "multipart/form-data" },
+      // });
 
-    //   if (res.status === 200) {
-    //     console.log("Audio uploaded successfully!", res.data);
-    //     navigate(`/user/interview-preview/${id}`);
-    //   } else {
-    //     console.error("Upload failed");
-    //   }
+      // if (res.status === 200) {
+      //   console.log("Audio uploaded successfully!", res.data);
+        navigate(`/user/interview-preview/${id}`);
+      // } else {
+      //   console.error("Upload failed");
+      // }
     } catch (error) {
       console.error("Error uploading audio:", error);
     }
