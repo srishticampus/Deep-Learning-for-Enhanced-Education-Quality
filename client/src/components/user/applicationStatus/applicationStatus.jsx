@@ -15,7 +15,7 @@ export const Applications = () => {
     setSearchedItem(e.target.value);
   };
   const handleClick = (id) => {
-    navigate(`/user/interview-preview/${id}`);
+    navigate('/user/interview-selfintroduction/'+id)
   };
 
   useEffect(() => {

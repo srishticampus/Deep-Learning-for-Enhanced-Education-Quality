@@ -21,7 +21,8 @@ import { ApplicationStatus } from "./pages/user/applicationStatus/applicationSta
 import { InterviewPreview } from "./components/user/interview/interviewPreview";
 import { AttendInterview } from "./components/user/interview/attendInterview";
 import { InterviewScore } from "./components/user/interview/interviewScore";
-
+import SelfIntroduction from "./components/user/interview/SelfIntroduction";
+import "../node_modules/bootstrap/dist/css/bootstrap.min.css"
 function App() {
   return (
     <BrowserRouter basename="/lexsi">
@@ -37,6 +38,10 @@ function App() {
             path="/user/application-status"
             element={<ApplicationStatus />}
           />
+          <Route
+          path="/user/interview-selfintroduction/:id"
+          element={<SelfIntroduction />}
+        />
         </Route>
         <Route path="/user/jobs" element={<Jobs />} />
         <Route path="/user/profile" element={<UserProfile />} />

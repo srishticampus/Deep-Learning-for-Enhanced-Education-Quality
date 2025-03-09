@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { JobCard } from "../../landing/jobCard";
 import { axiosInstance } from "../../../apis/axiosInstance";
+import { useUserData } from "../../../hooks/useUserData";
 
 export const CompanyJobs = ({ clickOnJob }) => {
   const [jobs, setJobs] = useState([]);
-
+  console.log(useUserData,"ll");
+  
   useEffect(() => {
     getJobs();
+
   }, []);
 
   const getJobs = async () => {
     try {
+    
       const res = await axiosInstance.get(`jobs/`);
       if (res.status === 200) {
         const data = res.data || [];
@@ -21,7 +25,7 @@ export const CompanyJobs = ({ clickOnJob }) => {
       return false;
     }
   };
-
+  console.log(jobs,"kk");
   return (
     <section className="tw-py-16 tw-px-4 tw-bg-lexiBlue-100 tw-min-h-screen">
       <div className="tw-text-center tw-mb-16 tw-bg-#f3f8ff">
