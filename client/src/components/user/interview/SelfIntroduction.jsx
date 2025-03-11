@@ -59,6 +59,7 @@ function SelfIntroduction() {
     navigate(`/user/interview-preview/${id}`);
   };
 
+  const userid=localStorage.getItem("lexi-user-id")
   // Upload Audio and User Data
   const uploadAudio = async () => {
     if (!audioUrl) {
@@ -135,7 +136,7 @@ function SelfIntroduction() {
 
     const formData = new FormData();
     formData.append("audio_file", wavBlob, "recording.mp3"); // Ensure key matches API requirement
-    formData.append("user", id); // Extract user ID
+    formData.append("user", userid); // Extract user ID
 
     try {
       const apiResponse = await axiosInstance.post(
