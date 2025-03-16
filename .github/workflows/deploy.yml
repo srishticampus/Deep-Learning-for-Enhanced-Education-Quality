@@ -1,4 +1,4 @@
-name: Deploy Django Animal Welfare Project
+name: Deploy Django Deep Learning for Enhanced Education Quality Project
 
 on:
   push:
