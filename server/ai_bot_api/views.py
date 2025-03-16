@@ -21,7 +21,7 @@ from django.shortcuts import get_object_or_404
 from .serializers import SelfIntroductionSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
 import speech_recognition as sr
-from moviepy import *
+#from moviepy import *
 from .models import SelfIntroduction
 
 # Create your views here.

@@ -1,0 +1,13 @@
+services:
+  django_backend:
+    build:
+      context: ./server  # Path to the directory containing the Dockerfile
+      dockerfile: Dockerfile  # Name of the Dockerfile
+    container_name: deep_learning_for_enhanced_education_quality_django
+    volumes:
+      - ./server:/app  # Maps the host's server directory to /app in the container
+      - ./server/staticfiles:/app/staticfiles  # Maps staticfiles directory
+      - ./server/media:/app/media  # Maps media directory
+    ports:
+      - "8009:8000"
+    restart: always

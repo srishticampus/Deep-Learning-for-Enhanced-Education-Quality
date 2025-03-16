@@ -25,7 +25,7 @@ import SelfIntroduction from "./components/user/interview/SelfIntroduction";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css"
 function App() {
   return (
-    <BrowserRouter basename="/lexsi">
+    <BrowserRouter basename="/Deep-Learning-for-Enhanced-Education-Quality">
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/user/signup" element={<Signup />} />
