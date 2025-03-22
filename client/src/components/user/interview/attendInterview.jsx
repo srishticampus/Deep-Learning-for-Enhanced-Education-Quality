@@ -26,6 +26,7 @@ export const AttendInterview = () => {
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [selectedDeviceId, setSelectedDeviceId] = useState("");
   const menuRef = useRef(null);
+  const [emotion, setEmotion] = useState("");
   const videoRef = useRef(null);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -119,8 +120,42 @@ export const AttendInterview = () => {
       console.error("Error submitting interview score:", error);
     }
   };
-
+ 
+  const captureFrame = async () => {
+    const video = document.querySelector("video");
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+  
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+  
+    canvas.toBlob(async (blob) => {
+      const formData = new FormData();
+      formData.append("image", blob, "frame.jpg");
+  
+      try {
+        const response = await axiosInstance.post(
+          "/emotion-detection/",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+  
+        console.log("Detected Emotion:", response.data.emotion);
+      } catch (error) {
+        console.error("Error detecting emotion:", error);
+      }
+    }, "image/jpeg");
+  };
+  
+  // Call captureFrame() every few seconds
+  setInterval(captureFrame, 5000);
   useEffect(() => {
+
     const getVideoDevices = async () => {
       try {
         const devices = await navigator.mediaDevices.enumerateDevices();
@@ -240,6 +275,7 @@ export const AttendInterview = () => {
       </div>
     );
   }
+  
   return (
     <>
       <UserNavbar />
@@ -256,7 +292,6 @@ export const AttendInterview = () => {
                   Time Remaining : {formatTime(timeRemaining)}
                 </div> */}
               </div>
-
               <div className="tw-mb-8">
                 <h2 className="tw-text-xl tw-font-semibold tw-mb-6">
                   {currentQuestion?.question}

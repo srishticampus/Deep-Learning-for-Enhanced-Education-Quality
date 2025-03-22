@@ -147,7 +147,7 @@ function SelfIntroduction() {
 
       console.log("API Response:", apiResponse.data);
       setTransilatedData(apiResponse.data);
-      // Navigate to the next page, possibly passing transcription data
+      // Navigate to the next page, possibly passing s data
     } catch (error) {
       console.error("Error uploading audio:", error);
       alert("Failed to upload audio. Please try again.");
@@ -194,7 +194,13 @@ function SelfIntroduction() {
                 transilateddata.transcription.indexOf(
                   "Could not understand the audio"
                 ) > -1 ? (
-                  " "
+                  <button
+                    className="btn btn-primary"
+                    onClick={GotoMockInterview}
+                  >
+                    {" "}
+                   skip & Next
+                  </button>
                 ) : (
                   <button
                     className="btn btn-primary"

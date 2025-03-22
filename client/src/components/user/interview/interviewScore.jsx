@@ -17,6 +17,10 @@ export const InterviewScore = () => {
     }
   }, [id]);
 
+  const BackBtn=()=>{
+    navigate('/user/application-status')
+    window.location.reload()
+  }
   const getMyApplications = async (id) => {
     try {
       const res = await axiosInstance.get(`application/${id}/`);
@@ -73,7 +77,7 @@ export const InterviewScore = () => {
           <div className="tw-flex tw-justify-center tw-m-5">
             <button
               className="tw-bg-blue-600 tw-text-white tw-px-6 tw-py-2 tw-rounded-full tw-flex tw-items-center tw-gap-2"
-              onClick={() => navigate('/user/application-status')}
+              onClick={() => BackBtn()}
             >
               <ChevronLeft className="tw-w-4 tw-h-4" />
               Back 
