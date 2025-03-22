@@ -449,6 +449,8 @@ classifier = load_model('model3.h5')
 emotion_labels = ['Angry', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
 
 class EmotionDetectionView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+
     def post(self, request):
         image_file = request.FILES.get("image")
 
@@ -468,7 +470,8 @@ class EmotionDetectionView(APIView):
         if len(faces) == 0:
             return Response({"error": "No face detected"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Process Detected Faces
+        detected_emotions = []
+        
         for (x, y, w, h) in faces:
             roi_gray = gray[y:y + h, x:x + w]
             roi_gray = cv2.resize(roi_gray, (48, 48), interpolation=cv2.INTER_AREA)
@@ -479,7 +482,17 @@ class EmotionDetectionView(APIView):
 
             prediction = classifier.predict(roi)[0]
             label = emotion_labels[prediction.argmax()]
+            detected_emotions.append(label)
 
-            return Response({"emotion": label}, status=status.HTTP_200_OK)
+            # Draw rectangle around the face
+            cv2.rectangle(image_cv, (x, y), (x + w, y + h), (0, 255, 255), 2)
 
-        return Response({"error": "Face processing failed"}, status=status.HTTP_400_BAD_REQUEST)
+            # Display the label (emotion) above the detected face
+            label_position = (x, y - 10)
+            cv2.putText(image_cv, label, label_position, cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+
+        # Convert OpenCV image to bytes for response (optional)
+        _, img_encoded = cv2.imencode('.jpg', image_cv)
+        img_bytes = img_encoded.tobytes()
+
+        return Response({"detected_emotions": detected_emotions}, status=status.HTTP_200_OK)
