@@ -442,6 +442,8 @@ from tensorflow.keras.models import load_model
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from PIL import Image
 import io
+from django.http import JsonResponse, HttpResponse
+
 
 # Load Model and Face Detector
 face_classifier = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
@@ -491,8 +493,7 @@ class EmotionDetectionView(APIView):
             label_position = (x, y - 10)
             cv2.putText(image_cv, label, label_position, cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
-        # Convert OpenCV image to bytes for response (optional)
+        # Encode the processed image and return it
         _, img_encoded = cv2.imencode('.jpg', image_cv)
         img_bytes = img_encoded.tobytes()
-
-        return Response({"detected_emotions": detected_emotions}, status=status.HTTP_200_OK)
+        return HttpResponse(img_bytes, content_type="image/jpeg")
