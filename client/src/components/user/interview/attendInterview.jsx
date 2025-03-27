@@ -121,39 +121,97 @@ export const AttendInterview = () => {
     }
   };
  
+  // const captureFrame = async () => {
+  //   const video = document.querySelector("video");
+  //   const canvas = document.createElement("canvas");
+  //   const context = canvas.getContext("2d");
+  
+  //   canvas.width = video.videoWidth;
+  //   canvas.height = video.videoHeight;
+  //   context.drawImage(video, 0, 0, canvas.width, canvas.height);
+  
+  //   canvas.toBlob(async (blob) => {
+  //     const formData = new FormData();
+  //     formData.append("image", blob, "frame.jpg");
+  
+  //     try {
+  //       const response = await axiosInstance.post(
+  //         "/emotion-detection/",
+  //         formData,
+  //         {
+  //           headers: {
+  //             "Content-Type": "multipart/form-data",
+  //           },
+  //         }
+  //       );
+  
+  //       console.log("Detected Emotion:", response.data.detected_emotions[0]);
+  //     } catch (error) {
+  //       console.error("Error detecting emotion:", error);
+  //     }
+  //   }, "image/jpeg");
+  // };
+  
+  // Call captureFrame() every few seconds
+  // setInterval(captureFrame, 5000);
+
+
+
   const captureFrame = async () => {
     const video = document.querySelector("video");
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
-  
+
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-  
+
     canvas.toBlob(async (blob) => {
-      const formData = new FormData();
-      formData.append("image", blob, "frame.jpg");
-  
-      try {
-        const response = await axiosInstance.post(
-          "/emotion-detection/",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-  
-        console.log("Detected Emotion:", response.data.emotion);
-      } catch (error) {
-        console.error("Error detecting emotion:", error);
-      }
+        const formData = new FormData();
+        formData.append("image", blob, "frame.jpg");
+
+        try {
+            // First API: Emotion Detection
+            const emotionResponse = await axiosInstance.post(
+                "/emotion-detection/",
+                formData
+            );
+
+            const detectedEmotion = emotionResponse.data.detected_emotions[0] || "Unknown";
+
+            console.log(detectedEmotion,"detectedEmotion");
+            
+            // Draw emotion label on the canvas
+            context.font = "30px Arial";
+            context.fillStyle = "red";
+            context.fillText(`Emotion: ${detectedEmotion}`, 20, 50);
+
+            // Convert canvas to an image and display it
+            const imgElement = document.getElementById("processedImage");
+            imgElement.src = canvas.toDataURL("image/png");
+
+            // Second API: Store Emotion History
+            // const historyData = {
+            //     emotion: detectedEmotion,
+            //     timestamp: new Date().toISOString(),
+            // };
+
+            // await axiosInstance.post(
+            //     "/store-emotion-history/",
+            //     historyData
+            // );
+
+            // console.log("Emotion history stored successfully.");
+
+        } catch (error) {
+            console.error("Error:", error);
+        }
     }, "image/jpeg");
-  };
-  
-  // Call captureFrame() every few seconds
-  setInterval(captureFrame, 5000);
+};
+
+// Call captureFrame() every few seconds
+setInterval(captureFrame, 5000);
+
   useEffect(() => {
 
     const getVideoDevices = async () => {
@@ -279,6 +337,8 @@ export const AttendInterview = () => {
   return (
     <>
       <UserNavbar />
+
+
       <div className="tw-min-h-screen tw-bg-gray-50 tw-p-6">
         <div className="tw-container tw-mx-auto">
           <div className="tw-grid tw-grid-cols-[1fr,300px] tw-gap-6">
@@ -377,8 +437,10 @@ export const AttendInterview = () => {
             <div className="tw-space-y-6">
               {/* Video Preview */}
               <div className="tw-bg-gray-800 tw-rounded-xl tw-overflow-hidden">
+                              <img id="processedImage" style={{width:'400px',height:"150px"}} alt="Processed Emotion" className="tw-w-full tw-rounded-xl" />
                 <div className="tw-aspect-video tw-relative">
                   <video
+
                     ref={videoRef}
                     autoPlay
                     playsInline
@@ -460,6 +522,7 @@ export const AttendInterview = () => {
                     </button>
                   ))}
                 </div>
+
               </div>
             </div>
           </div>
