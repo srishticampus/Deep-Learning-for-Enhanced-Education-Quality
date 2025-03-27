@@ -84,3 +84,11 @@ class SelfIntroduction(models.Model):
 
     def __str__(self):
         return f"Self-Intro by {self.user.username}"
+    
+
+class DetectedEmotion(models.Model):
+    emotion = models.CharField(max_length=50)  
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.emotion} - {self.timestamp}"

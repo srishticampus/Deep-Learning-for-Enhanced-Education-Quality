@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import RegistrationSerializer
 from django.contrib.auth import authenticate
-from .models import CustomUser, AddJob, AddCompanies
+from .models import CustomUser, AddJob, AddCompanies, DetectedEmotion
 from .serializers import UserSerializer, AddCompanySerializer, ResetPasswordSerializer, AddJobSerializer, JobApplication, JobApplicationSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework.authtoken.models import Token
@@ -486,14 +486,13 @@ class EmotionDetectionView(APIView):
             label = emotion_labels[prediction.argmax()]
             detected_emotions.append(label)
 
-            # Draw rectangle around the face
-            cv2.rectangle(image_cv, (x, y), (x + w, y + h), (0, 255, 255), 2)
+            # Store the detected emotion in the database
+            DetectedEmotion.objects.create(emotion=label)
 
-            # Display the label (emotion) above the detected face
-            label_position = (x, y - 10)
-            cv2.putText(image_cv, label, label_position, cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-
-        # Encode the processed image and return it
-        _, img_encoded = cv2.imencode('.jpg', image_cv)
-        img_bytes = img_encoded.tobytes()
-        return HttpResponse(img_bytes, content_type="image/jpeg")
+        return Response({"detected_emotions": detected_emotions}, status=status.HTTP_200_OK)
+    
+class EmotionHistoryView(APIView):
+    def get(self, request):
+        emotions = DetectedEmotion.objects.all().order_by("-timestamp")[:10]
+        data = [{"emotion": e.emotion, "timestamp": e.timestamp} for e in emotions]
+        return Response(data, status=status.HTTP_200_OK)
